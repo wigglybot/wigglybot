@@ -1,0 +1,77 @@
+version: '2'
+services:
+
+  ngrok:
+    image: wernight/ngrok
+    ports:
+    - "4040:4040"
+    environment:
+    - NGROK_PORT=<vm-ip>:80
+
+  aggregate:
+    image: wigglybot/aggregate
+    depends_on:
+      - eventstore
+      - mongo
+    networks:
+      - wigglybot
+
+  parser:
+    image: wigglybot/parser
+    depends_on:
+      - eventstore
+    networks:
+      - wigglybot
+
+  slackwatcher:
+    image: wigglybot/slackwatcher
+    ports:
+    - "80:8000"
+    depends_on:
+      - eventstore
+    networks:
+      - wigglybot
+    environment:
+    - EVENTS_API_TOKEN=<api-token>
+    - ENDPOINT=/incoming
+
+  slackposter:
+    image: wigglybot/slackposter
+    depends_on:
+      - eventstore
+    networks:
+      - wigglybot
+    environment:
+    - SLACK_BOT_TOKEN=<bot-token>
+
+  eventstore:
+    image: eventstore/eventstore
+    ports:
+    - "2113:2113"
+    - "1113:1113"
+    networks:
+    - wigglybot
+
+  mongo:
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+    ports:
+    - "27017:27017"
+    networks:
+    - wigglybot
+
+  mongo-express:
+    image: mongo-express
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: password
+    ports:
+    - "8081:8081"
+    networks:
+    - wigglybot
+
+networks:
+  wigglybot:
+    name: wigglybot
