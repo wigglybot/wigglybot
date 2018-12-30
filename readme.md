@@ -12,29 +12,18 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
-
-```
-Give examples
-```
+1. A docker container host, such as Rancher OS, installed somewhere suitable (either a VM or on bare metal).
+1. A development environment on your local machine - Wiggybot is developed in Python, however pretty much any language can be used to develop components; the only prerequisites are that the language used can:
+   * produce code which can be deployed to a docker container, and
+   * connect to Event Store
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running
+Use the provided docker-compose.yml to pull in Wigglybot's images and bring up the stack, substituting your `SLACK_BOT_TOKEN` and `EVENTS_API_TOKEN` (now signing secret as per Slack recent changes) with the relevant values.
 
-Say what the step will be
+Using Rancher on RancherOS, create a new stack called "wigglybot", and copy-paste the docker-compose.yml into the UI.
 
-```
-Give the example
-```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
+Once the stack is up, navigate to `<stack-ip>:4040`, and transfer the ngrok URL to your Slack event subscriptions, adding /incoming, so that the URL looks something like `https://f11e0810.ngrok.io/incoming`. To check all is working fine, @-mention the bot in a Slack channel with the command "@bot ods B81039". The bot should respond with information retrieved about that particular organisation.
 
 ## Running the tests
 
@@ -58,12 +47,13 @@ Give an example
 
 ## Deployment
 
-Add additional notes about how to deploy this on a live system
+Deploying to Live uses the same `docker-compose.yml`, simply remove the ngrok service from the compose file, and ensure Slack's event subscription points to the slackwatcher address/port. 
 
 ## Built With
 
-* [Quart](https://gitlab.com/pgjones/quart) - Quart is a Python ASGI web microframework with the same API as Flask.
-* [Event Store](https://eventstore.org/) - The open-source, functional database with Complex Event Processing in JavaScript.
+* [Flask](http://flask.pocoo.org/) - a microframework for Python.
+* [Event Store](https://eventstore.org/) - open-source, functional database.
+* [MongoDB](https://www.mongodb.com/) - a document database.
 * [Python](https://www.python.org/)
 
 ## Contributing
