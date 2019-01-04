@@ -9,7 +9,7 @@ services:
     - NGROK_PORT=<vm-ip>:80
 
   aggregate:
-    image: wigglybot/aggregate
+    image: wigglybot/aggregate:1.0.4
     depends_on:
       - eventstore
       - mongo
@@ -17,7 +17,7 @@ services:
       - wigglybot
 
   parser:
-    image: wigglybot/parser
+    image: wigglybot/parser:1.0.31
     depends_on:
       - eventstore
     networks:
@@ -43,7 +43,13 @@ services:
       - wigglybot
     environment:
     - SLACK_BOT_TOKEN=<bot-token>
-
+    
+  spine:
+    image: wigglybot/spine:1.0.8
+    depends_on:
+      - eventstore
+    networks:
+      - wigglybot
   eventstore:
     image: eventstore/eventstore
     ports:
